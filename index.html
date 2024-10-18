@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hendon School Quiz</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #6a5acd, #7f00ff);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .question {
+            margin: 20px 0;
+        }
+        .option {
+            background-color: transparent;
+            border: 2px solid white;
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        .option:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .option.correct {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .option.incorrect {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .next-button {
+            background-color: #7f00ff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        .next-button:hover {
+            background-color: #6a5acd;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz">
+        <!-- Quiz content will be injected here by JavaScript -->
+    </div>
+    <button class="next-button" id="next-button" onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "🏫 What are the 4 core values of Hendon School?",
+            options: [
+                "Believe, Achieve, Lead, Belong.",
+                "Respect, Integrity, Excellence, Collaboration.",
+                "Learn, Grow, Succeed, Unite.",
+                "Trust, Honor, Service, Community."
+            ],
+            correct: 0
+        },
+        {
+            question: "🧑‍🏫 Who is in the student hall right now?",
+            options: [
+                "Ms Smith",
+                "Mr Johnson",
+                "Mr Ramzy",
+                "Mrs Davis"
+            ],
+            correct: 2
+        },
+        {
+            question: "📅 When do we go back to school after the half-term break?",
+            options: [
+                "Monday the 4th.",
+                "Tuesday the 5th.",
+                "Wednesday the 6th.",
+                "Thursday the 7th."
+            ],
+            correct: 0
+        },
+        {
+            question: "📝 Why do we do CATs Testing on that day?",
+            options: [
+                "To identify our target GCSE grades and needs for support.",
+                "Because it's tradition.",
+                "To fill up time.",
+                "No particular reason."
+            ],
+            correct: 0
+        },
+        {
+            question: "🧦 Socks should be blue, black, or white and shorter than knee length. Or you can wear blue, black, or nude-colored tights too.",
+            options: [
+                "True",
+                "False"
+            ],
+            correct: 0
+        },
+        {
+            question: "❌📖 When do we NOT do Reading Canon?",
+            options: [
+                "Monday assembly and Wednesday Personal Development.",
+                "Tuesday and Thursday mornings.",
+                "Every day of the week.",
+                "Only on Fridays."
+            ],
+            correct: 0
+        },
+        {
+            question: "🕒 If you are 15 minutes late every school day for a year, you lose ____ days in total.",
+            options: [
+                "10 days.",
+                "5 days.",
+                "15 days.",
+                "20 days."
+            ],
+            correct: 0
+        },
+        {
+            question: "🤒 What should you do if your child is sick?",
+            options: [
+                "Keep them at home and phone the school.",
+                "Send them to school anyway.",
+                "Ignore and hope they get better.",
+                "Send an email."
+            ],
+            correct: 0
+        },
+        {
+            question: "📅 Where do you get to know key dates, events, and holidays like parents’ evenings, sports fixtures, trips & events, school closure details?",
+            options: [
+                "Hendon Newsletter.",
+                "School Website.",
+                "Social Media.",
+                "Notice Board."
+            ],
+            correct: 0
+        },
+        {
+            question: "📰 Where do you get the Hendon newsletter?",
+            options: [
+                "Parentmail app.",
+                "From the school office.",
+                "It’s mailed to your home.",
+                "From teachers."
+            ],
+            correct: 0
+        },
+        {
+            question: "💻 Where can you see and do homework?",
+            options: [
+                "Frog",
+                "Google Classroom",
+                "Email",
+                "Textbook"
+            ],
+            correct: 0
+        },
+        {
+            question: "🆓 Are the clubs in Hendon free to join?",
+            options: [
+                "Yes",
+                "No",
+                "Only some of them",
+                "Depends on the club"
+            ],
+            correct: 0
+        },
+        {
+            question: "🌐 When and where do you choose the main foreign languages?",
+            options: [
+                "Frog by 8pm Wednesday 23rd of October.",
+                "In class on Monday.",
+                "At the language fair.",
+                "During assembly."
+            ],
+            correct: 0
+        },
+        {
+            question: "❓ Can it be changed later?",
+            options: [
+                "No.",
+                "Yes.",
+                "Maybe.",
+                "Depends on the situation."
+            ],
+            correct: 0
+        }
+    ];
+
+    let currentQuestion = 0;
+    let quiz = document.getElementById('quiz');
+    let nextButton = document.getElementById('next-button');
+
+    function loadQuestion() {
+        const questionData = quizData[currentQuestion];
+        quiz.innerHTML = `
+            <div class="question">
+                <p>${questionData.question}</p>
+                ${questionData.options.map((option, index) => `
+                    <button class="option" onclick="selectOption(${index})">${option}</button>
+                `).join('')}
+            </div>
+        `;
+        nextButton.style.display = 'none';
+    }
+
+    function selectOption(selectedOption) {
+        const questionData = quizData[currentQuestion];
+        const options = document.getElementsByClassName('option');
+        for (let i = 0; i < options.length; i++) {
+            options[i].disabled = true;
+            if (i === questionData.correct) {
+                options[i].classList.add('correct');
+            }
+        }
+        if (selectedOption === questionData.correct) {
+            // Correct answer
+        } else {
+            // Incorrect answer
+            options[selectedOption].classList.add('incorrect');
+        }
+        nextButton.style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            quiz.innerHTML = '<h2>🎉 Quiz Completed! 🎉</h2>';
+            nextButton.style.display = 'none';
+        }
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
